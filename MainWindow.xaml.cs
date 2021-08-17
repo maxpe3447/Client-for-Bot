@@ -75,7 +75,7 @@ namespace ClientForBot
 
         private void bSendInfo_Click(object sender, RoutedEventArgs e)
         {
-            client.SetTextFromFile(lastSelectFileName, tbInfo.Text);
+            client.SetTextFromFile(lastSelectFileName, tbInfo.Text.ToString());
             ShowLogs();
         }
 

@@ -8,8 +8,8 @@ namespace Tg_Bot
 {
     class Client
     {
-        public string Ip { get; set; } = "80.87.192.62";//"192.168.1.9";
-        public int Port { get; set; } = 30678;
+        public string Ip { get; set; } = "217.28.223.128";//"192.168.1.9";
+        public int Port { get; set; } = 30701;
         private Socket clientSocket;
         private IPEndPoint endPoint;
         private string okCode;
