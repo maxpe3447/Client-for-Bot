@@ -8,8 +8,9 @@ namespace Tg_Bot
 {
     class Client
     {
-        public string Ip { get; set; } = "217.28.223.128";//"192.168.1.9";
-        public int Port { get; set; } = 30701;
+        public string Ip { get; set; } = "192.168.88.63";//"178.250.158.248";//"192.168.1.9";
+        public int Port { get; set; } = 8085;//30722;
+        public static string MainDir { get; } = "ServiceFiles/";
         private Socket clientSocket;
         private IPEndPoint endPoint;
         private string okCode;
@@ -26,22 +27,44 @@ namespace Tg_Bot
             clientSocket.Shutdown(SocketShutdown.Both);
             clientSocket.Close();
         }
-        public string[] GetFilesName()
+        public string[] GetFilesName(string dir_ = null)
         {
             if (okCode == null) return null;
             StartSocket();
             clientSocket.Connect(endPoint);
             ServerStatusOperation.Clear();
+
+            string dir = string.Empty;
+
+            if (dir_ == null)
+            {
+                SendData(((int)CodeForServer.GetFiles).ToString());
+                Logger_($"Operation {CodeForServer.GetFiles}", false);
+            }
+            else
+            {
+                SendData(((int)CodeForServer.GetFilesFromDir).ToString());
+                Logger_($"Operation {CodeForServer.GetFilesFromDir}");
+
+                SendData(dir_.Remove(dir_.IndexOf("..."), "...".Length));
+                Logger_($"Send dir: {dir_}", false);
+
+                dir = "...|";
+            }
+            string dirAns = AnswerFromServer();
+            dirAns = dirAns == okCode ? string.Empty : dirAns;
+            dir = dir.ToString() + dirAns;
+                Logger_($"Get dir: {dir.Split('|').Length}", false);
+
+                SendData(okCode);
+
+                string files = AnswerFromServer();
+                Logger_($"Get files: {files.Split('|').Length}", false);
             
-            SendData(((int)CodeForServer.GetFiles).ToString());
-            Logger_($"Operation {CodeForServer.GetFiles}", false);
-
-            string files = AnswerFromServer();
-            Logger_("Get files", false);
-
+            
             StopSocket();
 
-            return files.Split('|');
+            return (dir + "|---|" + files).Split("|");
         }
 
         public string GetTextFromFile(string fileName)
@@ -229,6 +252,6 @@ namespace Tg_Bot
     }
     enum CodeForServer
     {
-        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile
+        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir
     }
 }

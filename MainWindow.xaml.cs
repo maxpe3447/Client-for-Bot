@@ -42,12 +42,11 @@ namespace ClientForBot
                 tbLogs.AppendText("\n" + log);
             }
         }
-
-        private void bGetFileNames_Click(object sender, RoutedEventArgs e)
+        private void GetFilesFromServer(string dir = null)
         {
             lvFileNames.Items.Clear();
 
-            string[] files = client.GetFilesName();
+            string[] files = client.GetFilesName(dir);
 
             foreach (var log in client.ServerStatusOperation)
             {
@@ -56,8 +55,23 @@ namespace ClientForBot
             if (files != null)
                 foreach (var file in files)
                 {
-                    lvFileNames.Items.Add(file.Remove(0, "ServiceFiles/".Length));
+                    if (file.IndexOf(Tg_Bot.Client.MainDir) != -1)
+                    {
+                        lvFileNames.Items.Add(file.Remove(startIndex: 0, Tg_Bot.Client.MainDir.Length));
+                    }
+                    else if (file == string.Empty)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        lvFileNames.Items.Add(file);
+                    }
                 }
+        }
+        private void bGetFileNames_Click(object sender, RoutedEventArgs e)
+        {
+            GetFilesFromServer();
         }
 
         private string lastSelectFileName;
@@ -65,10 +79,24 @@ namespace ClientForBot
         {
             if (e.ChangedButton == MouseButton.Left)
             {
-                lastSelectFileName = lvFileNames.SelectedItems[0].ToString();
-                if (tbInfo != null) 
-                tbInfo.Text = client.GetTextFromFile(lastSelectFileName);
-
+                string lastSelectFileName_ = lvFileNames.SelectedItems[0].ToString();
+                if (lastSelectFileName_ == "---")
+                {
+                    return;
+                }
+                else if(lastSelectFileName_ == "...")
+                {
+                    GetFilesFromServer();
+                }
+                else if (lastSelectFileName_.IndexOf("...") == -1)
+                {
+                    tbInfo.Text = client.GetTextFromFile(lastSelectFileName_);
+                }
+                else
+                {
+                    GetFilesFromServer(lastSelectFileName_);
+                }
+                lastSelectFileName = lastSelectFileName_;
                 ShowLogs();
             }
         }

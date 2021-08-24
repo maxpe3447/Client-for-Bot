@@ -11,15 +11,13 @@
             <ColumnDefinition Width="61*"/>
             <ColumnDefinition Width="19*"/>
         </Grid.ColumnDefinitions>
-        <TextBox x:Name="tbInfo" 
+        <TextBox x:Name="tbInfo" AcceptsReturn="True" 
             HorizontalAlignment="Left"
             Margin="240,44,0,0" Text="Your Info..." 
             TextWrapping="Wrap" VerticalAlignment="Top"
             Width="290" 
             Height="179" 
-            RenderTransformOrigin="0.5,0.5" FontSize="15" AutomationProperties.IsRowHeader="True" KeyUp="tbInfo_KeyUp">
-
-        </TextBox>
+            RenderTransformOrigin="0.5,0.5" FontSize="15" AutomationProperties.IsRowHeader="True" KeyUp="tbInfo_KeyUp"/>
         <ListView x:Name="lvFileNames" Margin="10,44,400,0" RenderTransformOrigin="0.53,0.539" Background="#FFEEDB86" FontSize="14" Foreground="#FF042271" MouseDoubleClick="lvFileNames_MouseDoubleClick" MouseUp="lvFileNames_MouseUp" Height="179" VerticalAlignment="Top">
             <ListView.ContextMenu>
                 <ContextMenu>
@@ -46,7 +44,7 @@
                         </TransformGroup>
                     </Label.RenderTransform>
                 </Label>
-                <TextBox x:Name="tbIp" Height="20" Text="Ip..." TextWrapping="Wrap" Width="80" RenderTransformOrigin="0.5,0.5" Margin="20,-20,0,0">
+                <TextBox x:Name="tbIp" Height="20" Text="Ip..." TextWrapping="Wrap"  RenderTransformOrigin="0.5,0.5" Margin="50,-20,10, 0">
                     <TextBox.RenderTransform>
                         <TransformGroup>
                             <ScaleTransform/>
@@ -66,7 +64,7 @@
                         </TransformGroup>
                     </Label.RenderTransform>
                 </Label>
-                <TextBox x:Name="tbPort" Grid.Column="1" HorizontalAlignment="Left" Height="20" Margin="50,-18,0,0" Text="Port..." TextWrapping="Wrap" Width="80"/>
+                <TextBox x:Name="tbPort" Grid.Column="1" HorizontalAlignment="Left"  Margin="50,-20,10, 0" Text="Port..." TextWrapping="Wrap" Width="99"/>
                 <Button x:Name="bReconnect" Content="Reconnect" Grid.Column="1" HorizontalAlignment="Left" Height="25" Margin="10,15,0,0" VerticalAlignment="Top" Width="115" Click="bReconnect_Click"/>
                 <Label Content="Server Logs" HorizontalAlignment="Left" Height="30" Margin="30,20,0,0" VerticalAlignment="Top" Width="95" FontWeight="Bold" FontSize="16" FontFamily="Times New Roman" Grid.Column="1"/>
                 <TextBox x:Name="tbLogs" HorizontalAlignment="Left" Height="146" Margin="0,0,0,0" Text="Logs:" TextWrapping="Wrap" VerticalAlignment="Top" Width="158" MouseDoubleClick="tbLogs_MouseDoubleClick" Grid.ColumnSpan="2"/>
