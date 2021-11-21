@@ -15,9 +15,6 @@ using System.Windows.Shapes;
 
 namespace ClientForBot
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         Tg_Bot.Client client;
@@ -29,14 +26,30 @@ namespace ClientForBot
             if (client.ServerStatusOperation.Count != 0)
                 ShowLogs();
 
-            tbIp.Text = client.Ip;
-            tbPort.Text = client.Port.ToString();
+            WebSetting.GetIpPort();
+            tbIp.Text = client.Ip = WebSetting.Ip;
+            tbPort.Text = client.Port = WebSetting.Port;
+            client.Connect();
+
+            Closing += (a, s) => { WebSetting.SetIpPort(tbIp.Text, tbPort.Text); };
+            tbLogs.MouseDoubleClick += (s, e) =>{ tbLogs.Text = "Logs:"; client.ServerStatusOperation.Clear(); };
+            
         }
 
         private void bCreateEvent_Click(object sender, RoutedEventArgs e)
         {
+
+            string temp = dpDate.ToString();
+            if (string.IsNullOrEmpty(temp))
+            {
+                MessageBox.Show("No data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            string date = Convert.ToDateTime(temp).ToUniversalTime().ToString();
+            tbLogs.AppendText($"\n {date}");
             
-            client.CreateEvent(dpDate.ToString(),tbInfo.Text);
+
+            client.CreateEvent(date, tbInfo.Text);
             foreach (var log in client.ServerStatusOperation)
             {
                 tbLogs.AppendText("\n" + log);
@@ -69,10 +82,10 @@ namespace ClientForBot
                     }
                 }
         }
-        private void bGetFileNames_Click(object sender, RoutedEventArgs e)
-        {
-            GetFilesFromServer();
-        }
+        //private void bGetFileNames_Click(object sender, RoutedEventArgs e)
+        //{
+        //    GetFilesFromServer();
+        //}
 
         private string lastSelectFileName;
         private void lvFileNames_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -80,7 +93,7 @@ namespace ClientForBot
             if (e.ChangedButton == MouseButton.Left)
             {
                 string lastSelectFileName_ = lvFileNames.SelectedItems[0].ToString();
-                if (lastSelectFileName_ == "---")
+                if (lastSelectFileName_ == Tg_Bot.Client.Separator)
                 {
                     return;
                 }
@@ -88,9 +101,18 @@ namespace ClientForBot
                 {
                     GetFilesFromServer();
                 }
-                else if (lastSelectFileName_.IndexOf("...") == -1)
+                else if (!lastSelectFileName_.Contains("..."))
                 {
                     tbInfo.Text = client.GetTextFromFile(lastSelectFileName_);
+                }
+                else if (lastSelectFileName_.Contains(".db"))
+                {
+                    lvFileNames.Items.Clear();
+                    var tables = client.GetTableNames();
+                    foreach (var table in tables)
+                    {
+                        lvFileNames.Items.Add(table);
+                    }
                 }
                 else
                 {
@@ -115,20 +137,6 @@ namespace ClientForBot
             }
         }
 
-        private void tbLogs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            tbLogs.Text = "Logs:";
-        }
-
-
-        private void lvFileNames_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if(e.ChangedButton == MouseButton.Right)
-            {
-               
-            }
-        }
-
         private void bCreateFileEvent_Click(object sender, RoutedEventArgs e)
         {
             tbForSetName.Visibility = Visibility.Visible;
@@ -144,7 +152,7 @@ namespace ClientForBot
 
         private void bReconnect_Click(object sender, RoutedEventArgs e)
         {
-            client.Connect(tbIp.Text, int.Parse(tbPort.Text));
+            client.Connect(tbIp.Text, tbPort.Text);
             ShowLogs();
         }
 
@@ -192,6 +200,22 @@ namespace ClientForBot
         private void tbForSetName_MouseEnter(object sender, MouseEventArgs e)
         {
             tbForSetName.Text = string.Empty;
+        }
+
+        private void bGetFileNames_Click(object sender, RoutedEventArgs e)
+        {
+            GetFilesFromServer();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Window1 window = new Window1();
+            window.Show();
+        }
+
+        private void tbInfo_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
         }
     }
 

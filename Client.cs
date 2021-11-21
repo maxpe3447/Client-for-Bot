@@ -8,19 +8,16 @@ namespace Tg_Bot
 {
     class Client
     {
-        public string Ip { get; set; } = "192.168.88.63";//"178.250.158.248";//"192.168.1.9";
-        public int Port { get; set; } = 8085;//30722;
+        public string Ip { get; set; } = "1.1.1.1";
+        public string Port { get; set; } = "1";
         public static string MainDir { get; } = "ServiceFiles/";
         private Socket clientSocket;
         private IPEndPoint endPoint;
         private string okCode;
         public List<string> ServerStatusOperation = new List<string>();
+        public static string Separator { get; } = "________";
         public bool isConnect { get; set; } = false;
-        public Client()
-        {
-            Connect();
-
-        }
+        
         private void StartSocket() { clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp); }
         private void StopSocket()
         {
@@ -64,7 +61,7 @@ namespace Tg_Bot
             
             StopSocket();
 
-            return (dir + "|---|" + files).Split("|");
+            return (dir + $"|{Separator}|" + files).Split("|");
         }
 
         public string GetTextFromFile(string fileName)
@@ -163,6 +160,8 @@ namespace Tg_Bot
 
             SendData(newFileName);
             Logger_($"Send new name: {newFileName}");
+
+            StopSocket();
         }
         public void DeleteFile(string fileName)
         {
@@ -177,19 +176,38 @@ namespace Tg_Bot
 
             SendData(fileName);
             Logger_($"Delete {fileName}");
+
+            StopSocket();
         }
-        public void Connect(string ip = null, int port = -1)
+
+        public List<string> GetTableNames()
+        {
+            if (okCode == null) return null;
+            StartSocket();
+            clientSocket.Connect(endPoint);
+            ServerStatusOperation.Clear();
+
+            SendData(((int)CodeForServer.GetTableNamesFromDB).ToString());
+            Logger_($"Operation {CodeForServer.GetTableNamesFromDB}", false);
+
+            var result = new List<string>(AnswerFromServer().Trim('\0').Split('|'));
+
+            StopSocket();
+
+            return result;
+        }
+        public void Connect(string ip = null, string port = null)
         {
             if (!isConnect)
             {
                 ServerStatusOperation.Clear();
-                if (ip != null && port != -1)
+                if (ip != null && port != null)
                 {
                     Port = port;
                     Ip = ip;
                 }
 
-                endPoint = new IPEndPoint(IPAddress.Parse(Ip), Port);
+                endPoint = new IPEndPoint(IPAddress.Parse(Ip), int.Parse(Port));
 
                 StartSocket();
                 try
@@ -252,6 +270,6 @@ namespace Tg_Bot
     }
     enum CodeForServer
     {
-        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir
+        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir, GetTableNamesFromDB
     }
 }
