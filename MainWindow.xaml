@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientForBot"
         mc:Ignorable="d"
-        Title="Режим редагування" Height="450" Width="810" Background="#606090">
+        Title="Режим редагування" Height="450" Width="810" Background="#606090" Icon="/Icon.ico">
 
     <Grid HorizontalAlignment="Center" VerticalAlignment="Top">
         <Grid.RowDefinitions>
@@ -39,7 +39,7 @@
         <Button x:Name="bGetFileNames"  Content="Отримати файли" Background="#9078A8" Foreground="White" Grid.Column="0" Grid.Row="3" Margin="10,0,20,2" Height="40" FontSize="15" RenderTransformOrigin="0.5,0.5"  Click="bGetFileNames_Click"/>
         <Button x:Name="bSendInfo" Content="Відправити файл" Grid.Column="1" Grid.Row="3" Margin="5,0,190,2" Foreground="White" Background="#9078A8" FontSize="15" Click="bSendInfo_Click" />
         <Button x:Name="bCreateEvent" Content="Створити подію" Grid.Row="3" Grid.Column="1" Margin="190,0,10,2" Background="#9078A8" FontSize="15" Click="bCreateEvent_Click" Foreground="White"/>
-        <Button Content="Режим чатування" Grid.Column="2" Grid.Row="3" Margin="15,0,5,2" Foreground="White" Background="#9078A8" Click="Button_Click" FontSize="15"/>
+        <Button Content="Режим чатування" Grid.Column="2" Grid.Row="3" Margin="15,0,5,2" Foreground="White" Background="#9078A8" Click="ChatingWindow_click" FontSize="15"/>
 
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
@@ -47,17 +47,10 @@
                 <RowDefinition Height="50"/>
             </Grid.RowDefinitions>
 
-            <TextBox x:Name="tbInfo" Grid.Column="1" Grid.Row="0" AcceptsReturn="True" Margin="5,5,10,50" Text="Ваша інформація..." Background="#554D7D" Foreground="White" TextWrapping="Wrap"
+            <TextBox x:Name="tbInfo" Grid.Column="1" Grid.Row="0" AcceptsReturn="True" Margin="5,5,10,0" Text="Ваша інформація..." Background="#554D7D" Foreground="White" TextWrapping="Wrap"
             FontSize="15" AutomationProperties.IsRowHeader="True" KeyUp="tbInfo_KeyUp" TextChanged="tbInfo_TextChanged" />
 
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="175"/>
-                    <ColumnDefinition Width="175"/>
-                </Grid.ColumnDefinitions>
-                <DatePicker x:Name="dpDate" Grid.Column="0" Grid.Row="1" Margin="0,0,5,10" Text="18:11:2021 15:00:00" Foreground="#554D7D" Background="#554D7D" DisplayDateStart="01/08/2021 12:00:00" FirstDayOfWeek="Monday" IsTodayHighlighted="False" DisplayDateEnd="01/09/2026 12:00:00" />
-                
-            </Grid>
+            <DatePicker x:Name="dpDate" Grid.Column="0" Grid.Row="1" Margin="0,10,5,10" Text="18:11:2021 15:00:00" Foreground="#554D7D" Background="#554D7D" DisplayDateStart="01/08/2021 12:00:00" FirstDayOfWeek="Monday" IsTodayHighlighted="False" DisplayDateEnd="01/09/2026 12:00:00" />
         </Grid>
         
         <Grid Grid.Row="1" Grid.Column="2">

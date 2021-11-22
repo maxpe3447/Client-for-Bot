@@ -29,7 +29,7 @@ namespace ClientForBot
             WebSetting.GetIpPort();
             tbIp.Text = client.Ip = WebSetting.Ip;
             tbPort.Text = client.Port = WebSetting.Port;
-            client.Connect();
+            //client.Connect();
 
             Closing += (a, s) => { WebSetting.SetIpPort(tbIp.Text, tbPort.Text); };
             tbLogs.MouseDoubleClick += (s, e) =>{ tbLogs.Text = "Logs:"; client.ServerStatusOperation.Clear(); };
@@ -42,10 +42,9 @@ namespace ClientForBot
             string temp = dpDate.ToString();
             if (string.IsNullOrEmpty(temp))
             {
-                MessageBox.Show("No data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                temp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss tt");
             }
-            string date = Convert.ToDateTime(temp).ToUniversalTime().ToString();
+            string date = Convert.ToDateTime(temp).ToUniversalTime().ToString("dd/MM/yyyy HH:mm:ss tt");
             tbLogs.AppendText($"\n {date}");
             
 
@@ -207,10 +206,9 @@ namespace ClientForBot
             GetFilesFromServer();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ChatingWindow_click(object sender, RoutedEventArgs e)
         {
-            Window1 window = new Window1();
-            window.Show();
+            new ChatingWindow(client).Show();
         }
 
         private void tbInfo_TextChanged(object sender, TextChangedEventArgs e)

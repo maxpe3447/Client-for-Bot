@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-
+using System.Threading.Tasks;
 
 namespace Tg_Bot
 {
-    class Client
+    public class Client
     {
         public string Ip { get; set; } = "1.1.1.1";
         public string Port { get; set; } = "1";
@@ -61,15 +62,32 @@ namespace Tg_Bot
             
             StopSocket();
 
-            return (dir + $"|{Separator}|" + files).Split("|");
+            return (dir + $"|{Separator}|" + files).Split('|');
         }
+        public List<string> GetUsers()
+        {
+            if (okCode == null) return null;
+            StartSocket();
+            clientSocket.Connect(endPoint);
+            ServerStatusOperation.Clear();
 
+            SendData(((int)CodeForServer.GetUsers).ToString());
+            Logger_($"Operation {CodeForServer.GetFiles}");
+
+            
+            string answer = AnswerFromServer().Trim('\0');
+            var res = new List<string>( answer.Split('|'));
+            StopSocket();
+            return res;
+        }
         public string GetTextFromFile(string fileName)
         {
             if (okCode == null) return null;
 
             StartSocket();
+
             clientSocket.Connect(endPoint);
+
             ServerStatusOperation.Clear();
 
             SendData(((int)CodeForServer.GetTextFromFile).ToString());
@@ -188,7 +206,7 @@ namespace Tg_Bot
             ServerStatusOperation.Clear();
 
             SendData(((int)CodeForServer.GetTableNamesFromDB).ToString());
-            Logger_($"Operation {CodeForServer.GetTableNamesFromDB}", false);
+            Logger_($"Operation {CodeForServer.GetTableNamesFromDB}");
 
             var result = new List<string>(AnswerFromServer().Trim('\0').Split('|'));
 
@@ -196,7 +214,7 @@ namespace Tg_Bot
 
             return result;
         }
-        public void Connect(string ip = null, string port = null)
+        public  bool Connect(string ip = null, string port = null)
         {
             if (!isConnect)
             {
@@ -212,18 +230,22 @@ namespace Tg_Bot
                 StartSocket();
                 try
                 {
+                    
                     clientSocket.Connect(endPoint);
+                    
                 }
-                catch
+                catch (Exception ex)
                 {
                     ServerStatusOperation.Add("ERROR Conected!");
-                    return;
+                    StopSocket();
+                    throw ex;
+                    
                 }
 
-                if (clientSocket.Poll(2000, SelectMode.SelectError))
+                if (!clientSocket.Connected && clientSocket.Poll(1, SelectMode.SelectError))
                 {
                     ServerStatusOperation.Add("ERROR Conected!");
-                    return;
+                    return false;
                 }
                 SendData(((int)CodeForServer.ForConnect).ToString());
 
@@ -232,7 +254,13 @@ namespace Tg_Bot
                 Logger_("CONNECTED!", false);
 
                 StopSocket();
+               return true;
             }
+            return true;
+        }
+        public async void  ConnectAsync(string ip = null, string port = null)
+        {
+           await System.Threading.Tasks.Task.Run(()=> {  return Connect(ip, port); });
         }
         private string AnswerFromServer()
         {
@@ -254,7 +282,10 @@ namespace Tg_Bot
                 if (AnswerFromServer() == okCode)
                     ServerStatusOperation.Add(msg + "  -> Ok!");
                 else
+                {
                     ServerStatusOperation.Add(msg + "  -> Bad!");
+                    throw new Exception(msg + "  -> Bad!");
+                }
                 return;
             }
             ServerStatusOperation.Add(msg + "  -> Ok!");
@@ -270,6 +301,6 @@ namespace Tg_Bot
     }
     enum CodeForServer
     {
-        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir, GetTableNamesFromDB
+        None, ForConnect, GetFiles, GetTextFromFile, SetTextFromFile, CreateNewFile, CreateEvent, EditFileName, DeleteFile, GetFilesFromDir, GetTableNamesFromDB, GetUsers
     }
 }
