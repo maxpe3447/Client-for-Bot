@@ -72,7 +72,7 @@ namespace Tg_Bot
             ServerStatusOperation.Clear();
 
             SendData(((int)CodeForServer.GetUsers).ToString());
-            Logger_($"Operation {CodeForServer.GetFiles}");
+            Logger_($"Operation {CodeForServer.GetUsers}");
 
             
             string answer = AnswerFromServer().Trim('\0');

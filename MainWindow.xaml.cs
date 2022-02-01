@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+
 
 namespace ClientForBot
 {
@@ -45,14 +36,15 @@ namespace ClientForBot
                 temp = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss tt");
             }
             string date = Convert.ToDateTime(temp).ToUniversalTime().ToString("dd/MM/yyyy HH:mm:ss tt");
-            tbLogs.AppendText($"\n {date}");
-            
+            //tbLogs.AppendText($"\n {date}");
 
-            client.CreateEvent(date, tbInfo.Text);
-            foreach (var log in client.ServerStatusOperation)
-            {
-                tbLogs.AppendText("\n" + log);
-            }
+            var d = DateTime.ParseExact(temp, "dd/MM/yyyy HH:mm:ss tt", null);
+            //client.CreateEvent(date, tbInfo.Text);
+            //foreach (var log in client.ServerStatusOperation)
+            //{
+            //    tbLogs.AppendText("\n" + log);
+            //}
+            tbLogs.Text += $"Час:{new DateTime(d.Year, d.Month, d.Day, d.Hour, d.Minute, d.Second)}\nПовідомлення:\n{tbInfo.Text}\n";
         }
         private void GetFilesFromServer(string dir = null)
         {
